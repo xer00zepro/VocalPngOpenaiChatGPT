@@ -1,0 +1,34 @@
+const fs = require('fs');
+
+// Fonction pour recenser tous les PNJ humains disponibles dans le jeu
+function getAllHumanPeds() {
+  const peds = [];
+
+  // Parcourir tous les PNJ dans le jeu
+  for (let i = 0; i < pedTotal(); i++) {
+    const pedHash = getPedHash(i);
+    const pedModel = GetHashKey(pedHash);
+
+    // Vérifier si le modèle PNJ est un PNJ humain
+    if (IsPedHuman(pedModel)) {
+      // Récupérer le nom du PNJ à partir du modèle
+      const pedName = GetLabelText(pedModel);
+
+      // Ajouter le PNJ humain à la liste des PNJ humains
+      peds.push({
+        SignedHash: pedHash,
+        Name: pedName,
+        PedType: 'ped',
+        Personality: ''
+      });
+    }
+  }
+
+  return peds;
+}
+
+// Récupérer tous les PNJ humains disponibles
+const humanPedsData = getAllHumanPeds();
+
+// Enregistrement des données des PNJ humains dans un fichier peds.json
+fs.writeFileSync('peds.json', JSON.stringify(humanPedsData));
