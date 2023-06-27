@@ -31,6 +31,46 @@ localAudioPath = "recordings/"
 # Voice model to use when transcribing speech. Replace with False to disable transcriptions.
 voiceModel = ".\\modelSmall"
 
+from nltk import download, word_tokenize
+from nltk.corpus import stopwords
+from langdetect import detect
+from transformers import pipeline
+
+# Télécharger les ressources nécessaires de NLTK
+download('stopwords')
+
+# Charger le modèle GPT pour la génération de texte
+model = pipeline('text-generation', model='gpt2')
+
+# Fonction pour détecter la langue
+def detect_language(text):
+    tokens = word_tokenize(text.lower())
+    words = [word for word in tokens if word.isalpha() and word not in stopwords.words('english')]
+    lang = detect(' '.join(words))
+    return lang
+
+# Fonction pour traduire le texte en français
+def translate_to_french(text):
+    # Code pour traduire le texte en français en utilisant une API de traduction (ex : Google Translate)
+    # Renvoyer le texte traduit en français
+    pass
+
+# Fonction pour obtenir la réponse du PNJ
+def get_npc_response(player_question):
+    player_language = detect_language(player_question)
+
+    if player_language == 'fr':
+        npc_response = model(player_question, max_length=50, num_return_sequences=1)[0]['generated_text']
+    else:
+        translated_question = translate_to_french(player_question)
+        npc_response = model(translated_question, max_length=50, num_return_sequences=1)[0]['generated_text']
+
+    return npc_response
+
+# Exemple d'utilisation
+player_question = input("Posez votre question : ")
+npc_response = get_npc_response(player_question)
+print("PNJ :", npc_response)
 
 
 
